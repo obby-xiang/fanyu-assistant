@@ -1,19 +1,18 @@
 {
   "name": "fanyu-assistant",
   "version": "0.1.0",
-  "author": "obby",
-  "description": "fanyu-assistant",
-  "main": "main.js",
   "private": true,
-  "license": "MIT",
+  "description": "fanyu-assistant",
+  "author": "obby",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "CHCP 65001 && electron-forge start",
+    "make": "electron-forge make",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "start": "CHCP 65001 && electron-forge start"
   },
+  "main": "main.js",
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
@@ -24,25 +23,30 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
     "@electron-forge/cli": "^6.0.0-beta.64",
     "@electron-forge/maker-deb": "^6.0.0-beta.64",
     "@electron-forge/maker-rpm": "^6.0.0-beta.64",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.64",
     "@electron-forge/maker-zip": "^6.0.0-beta.64",
-    "@vue/cli-plugin-babel": "~4.5.15",
-    "@vue/cli-plugin-eslint": "~4.5.15",
-    "@vue/cli-plugin-router": "~4.5.15",
-    "@vue/cli-plugin-vuex": "~4.5.15",
-    "@vue/cli-service": "~4.5.15",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-plugin-router": "~5.0.8",
+    "@vue/cli-plugin-vuex": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
-    "@vue/eslint-config-airbnb": "^5.0.2",
-    "babel-eslint": "^10.1.0",
+    "@vue/eslint-config-airbnb": "^6.0.0",
+    "autoprefixer": "^10.4.7",
     "electron": "^19.0.8",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-vue": "^7.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-vue": "^8.0.3",
+    "eslint-plugin-vuejs-accessibility": "^1.1.0",
+    "postcss": "^8.4.14",
     "sass": "^1.26.5",
-    "sass-loader": "^8.0.2"
+    "sass-loader": "^8.0.2",
+    "tailwindcss": "^3.1.5"
   },
   "config": {
     "forge": {
@@ -77,5 +81,6 @@
         }
       ]
     }
-  }
+  },
+  "license": "MIT"
 }
