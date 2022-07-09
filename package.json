@@ -8,15 +8,15 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "make": "electron-forge make",
-    "package": "electron-forge package",
-    "start": "CHCP 65001 && electron-forge start"
+    "start": "CHCP 65001 && electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "app:dir": "electron-builder --dir --config electron-builder.config.js",
+    "app:dist": "electron-builder --config electron-builder.config.js"
   },
   "main": "main.js",
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
-    "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.21",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
@@ -25,11 +25,6 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
-    "@electron-forge/cli": "^6.0.0-beta.64",
-    "@electron-forge/maker-deb": "^6.0.0-beta.64",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.64",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.64",
-    "@electron-forge/maker-zip": "^6.0.0-beta.64",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
@@ -39,6 +34,7 @@
     "@vue/eslint-config-airbnb": "^6.0.0",
     "autoprefixer": "^10.4.7",
     "electron": "^19.0.8",
+    "electron-builder": "^23.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-vue": "^8.0.3",
@@ -47,40 +43,6 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "tailwindcss": "^3.1.5"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "ignore": [
-          ".idea/",
-          "node_modules/",
-          "public/",
-          "src/"
-        ]
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "fanyu_assistant"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
   },
   "license": "MIT"
 }
