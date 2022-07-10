@@ -2,8 +2,10 @@
 const {
   app,
   BrowserWindow,
+  ipcMain,
 } = require('electron');
 const path = require('path');
+const network = require('./network');
 
 function createWindow() {
   // Create the browser window.
@@ -28,6 +30,8 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.whenReady()
   .then(() => {
+    ipcMain.handle('network', (event, name, ...args) => network[name](...args));
+
     createWindow();
 
     app.on('activate', () => {
