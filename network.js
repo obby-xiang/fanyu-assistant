@@ -15,7 +15,7 @@ const fetchStores = () => new Promise((resolve, reject) => {
       if (_.get(response.data, 'status') === 'OK') {
         resolve(_.get(response.data, 'content.list', []));
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {
@@ -42,7 +42,7 @@ const fetchCourses = (payload) => new Promise((resolve, reject) => {
       if (_.get(response.data, 'status') === 'OK') {
         resolve(_.flatMap(_.get(response.data, 'content', [])));
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {
@@ -62,7 +62,7 @@ const login = (username, password) => new Promise((resolve, reject) => {
         axios.defaults.headers.common.token = user.token;
         resolve(user);
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {
@@ -82,7 +82,7 @@ const fetchUserCards = () => new Promise((resolve, reject) => {
       if (_.get(response.data, 'status') === 'OK') {
         resolve(_.get(response.data, 'content.list', []));
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {
@@ -101,7 +101,7 @@ const fetchUserCourses = () => new Promise((resolve, reject) => {
       if (_.get(response.data, 'status') === 'OK') {
         resolve(_.get(response.data, 'content.list', []));
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {
@@ -118,7 +118,7 @@ const bookCourse = (courseId, cardId) => new Promise((resolve, reject) => {
       if (_.get(response.data, 'status') === 'OK') {
         resolve(response.data);
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {
@@ -135,7 +135,7 @@ const cancelCourse = (bookId) => new Promise((resolve, reject) => {
       if (_.get(response.data, 'status') === 'OK') {
         resolve(response.data);
       } else {
-        reject(new Error(`Error response. data => ${response.data}`));
+        reject(new Error(`Error response. data => ${JSON.stringify(response.data)}`));
       }
     })
     .catch((error) => {

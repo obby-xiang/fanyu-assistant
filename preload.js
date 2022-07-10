@@ -7,4 +7,5 @@ const {
 
 contextBridge.exposeInMainWorld('electron', {
   network: (name, ...args) => ipcRenderer.invoke('network', name, ...args),
+  database: (name, ...args) => ipcRenderer.invoke('database', name, ...args),
 });

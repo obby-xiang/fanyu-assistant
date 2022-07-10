@@ -6,6 +6,7 @@ const {
 } = require('electron');
 const path = require('path');
 const network = require('./network');
+const database = require('./database');
 
 function createWindow() {
   // Create the browser window.
@@ -31,6 +32,7 @@ function createWindow() {
 app.whenReady()
   .then(() => {
     ipcMain.handle('network', (event, name, ...args) => network[name](...args));
+    ipcMain.handle('database', (event, name, ...args) => database[name](...args));
 
     createWindow();
 
