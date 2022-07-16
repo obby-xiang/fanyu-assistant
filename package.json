@@ -25,7 +25,8 @@
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuedraggable": "^4.1.0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "winston": "^3.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

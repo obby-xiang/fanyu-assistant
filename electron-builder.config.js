@@ -13,8 +13,12 @@ module.exports = {
     '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}',
-    'build/**',
+    'app/**',
+    'assets/**',
   ],
+  win: {
+    icon: './assets/logo.png',
+  },
   nsis: {
     oneClick: false,
     perMachine: false,

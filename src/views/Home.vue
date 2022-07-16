@@ -35,8 +35,17 @@
       <el-divider/>
 
       <h1 class="tw-text-lg tw-font-medium tw-mb-4">预约请求</h1>
-      <div class="tw-text-right">
+      <div class="tw-flex tw-flex-row tw-justify-between tw-space-x-4">
         <el-button type="primary" :icon="IconPlus" @click="showBookRequestFormDialog" circle/>
+        <el-button type="success"
+                   @click="state.isBookRequestProcessing = !state.isBookRequestProcessing" circle>
+          <el-icon v-if="state.isBookRequestProcessing" class="is-loading">
+            <icon-loading/>
+          </el-icon>
+          <el-icon v-else>
+            <icon-promotion/>
+          </el-icon>
+        </el-button>
       </div>
       <vue-draggable class="tw-mt-4" :list="state.bookRequests" item-key="id">
         <template #item="{element}">
@@ -50,18 +59,20 @@
                   </span>
                   <span>
                     {{
-                      DateTime.fromJSDate(element.timeRange[0])
+                      toDateTime(element.timeRange[0])
                         .toFormat('HH:mm')
                     }}
                     -
                     {{
-                      DateTime.fromJSDate(element.timeRange[1])
+                      toDateTime(element.timeRange[1])
                         .toFormat('HH:mm')
                     }}
                   </span>
                 </p>
                 <p class="tw-space-x-2 tw-space-y-2">
-                  <el-tag v-for="item in element.days" :key="item">{{ DAY_OPTIONS[item] }}</el-tag>
+                  <el-tag v-for="item in element.days" :key="item">
+                    {{ DAY_OPTIONS[item - 1] }}
+                  </el-tag>
                 </p>
               </div>
 
@@ -92,7 +103,7 @@
           </el-form-item>
           <el-form-item label="日期" prop="days">
             <el-select v-model="state.bookRequestForm.days" class="tw-w-full" multiple>
-              <el-option v-for="(item, index) in DAY_OPTIONS" :key="index" :value="index"
+              <el-option v-for="(item, index) in DAY_OPTIONS" :key="index" :value="index + 1"
                          :label="item"/>
             </el-select>
           </el-form-item>
@@ -118,7 +129,13 @@ import {
 } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
-  View as IconView, Hide as IconHide, Plus as IconPlus, Edit as IconEdit, Delete as IconDelete,
+  View as IconView,
+  Hide as IconHide,
+  Plus as IconPlus,
+  Edit as IconEdit,
+  Delete as IconDelete,
+  Loading as IconLoading,
+  Promotion as IconPromotion,
 } from '@element-plus/icons-vue';
 import VueDraggable from 'vuedraggable';
 import _ from 'lodash';
@@ -127,10 +144,12 @@ import { DateTime } from 'luxon';
 const DAY_OPTIONS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 const defaultTimeRange = [
   DateTime.now()
-    .startOf('hour'),
+    .startOf('hour')
+    .toJSDate(),
   DateTime.now()
-    .plus({ hour: 1 })
-    .startOf('hour'),
+    .startOf('hour')
+    .plus({ hours: 1 })
+    .toJSDate(),
 ];
 
 const state = reactive({
@@ -142,6 +161,7 @@ const state = reactive({
   stores: [],
   bookRequestForm: {},
   isBookRequestFormDialogVisible: false,
+  isBookRequestProcessing: false,
 });
 
 const bookRequestFormRules = {
@@ -193,13 +213,13 @@ const showBookRequestFormDialog = (model) => {
 };
 
 const saveBookRequest = () => {
-  bookRequestFormRef.value.validate((valid) => {
+  bookRequestFormRef.value.validate(async (valid) => {
     if (valid) {
       const index = _.findIndex(state.bookRequests, { id: state.bookRequestForm.id });
       if (index < 0) {
         const model = {
           ...state.bookRequestForm,
-          id: (new Date()).getTime(),
+          id: await window.electron.randomUUID(),
         };
         state.bookRequests.push(model);
       } else {
@@ -226,13 +246,43 @@ const deepUnRef = (input) => {
   return input;
 };
 
+const toDateTime = (input) => {
+  if (DateTime.isDateTime(input)) {
+    return input;
+  }
+
+  if (_.isDate(input)) {
+    return DateTime.fromJSDate(input);
+  }
+
+  if (_.isString(input)) {
+    return DateTime.fromISO(input);
+  }
+
+  return DateTime.now();
+};
+
 watch(() => state.account, (newValue) => {
-  window.electron.database('put', 'account', deepUnRef(newValue));
+  const data = _.pick(deepUnRef(newValue), ['username', 'password']);
+  window.electron.database('put', 'account', data);
 }, { deep: true });
 
 watch(() => state.bookRequests, (newValue) => {
-  window.electron.database('put', 'bookRequests', deepUnRef(newValue));
+  const data = _.map(deepUnRef(newValue), (item) => _.pick(item, ['id', 'storeId', 'timeRange', 'days', 'enable']));
+  window.electron.database('put', 'bookRequests', data);
 }, { deep: true });
+
+watch(() => state.isBookRequestProcessing, (newValue) => {
+  window.electron.database('put', 'isBookRequestProcessing', deepUnRef(newValue));
+}, { deep: true });
+
+window.electron.onDatabasePutEvent((event, key, value) => {
+  if (key === 'isBookRequestProcessing') {
+    if (state.isBookRequestProcessing !== value) {
+      state.isBookRequestProcessing = value;
+    }
+  }
+});
 
 window.electron.database('get', 'account')
   .then((data) => {
@@ -241,11 +291,12 @@ window.electron.database('get', 'account')
 
 window.electron.database('get', 'bookRequests')
   .then((data) => {
-    _.forEach(data, (item) => {
-      item.timeRange = _.castArray(_.map(item.timeRange, (time) => DateTime.fromISO(time)
-        .toJSDate()));
-    });
     state.bookRequests = data;
+  });
+
+window.electron.database('get', 'isBookRequestProcessing')
+  .then((data) => {
+    state.isBookRequestProcessing = data;
   });
 
 window.electron.network('fetchStores')
