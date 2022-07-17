@@ -19,6 +19,10 @@ const { randomUUID } = require('crypto');
 const network = require('./network');
 const database = require('./database');
 
+app.setLoginItemSettings({
+  openAtLogin: true,
+});
+
 const stringify = (input) => (_.isPlainObject(input) || _.isArray(input) ? util.format('%o', input) : _.toString(input));
 
 const BOOK_REQUESTS_PROCESSING_INTERVAL = 10 * 1000;
