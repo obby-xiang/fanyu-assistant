@@ -83,7 +83,8 @@
               <div class="tw-flex tw-flex-row tw-my-auto tw-space-x-4">
                 <el-button :icon="IconEdit" circle type="primary"
                            @click="showBookRequestFormDialog(element)"/>
-                <el-button :icon="IconDelete" circle type="danger"/>
+                <el-button :icon="IconDelete" circle type="danger"
+                           @click="showBookRequestDeleteDialog(element)"/>
               </div>
             </div>
           </el-card>
@@ -132,7 +133,7 @@
 import {
   isRef, reactive, ref, watch,
 } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import {
   Delete as IconDelete,
   Edit as IconEdit,
@@ -216,6 +217,26 @@ const validateAccount = () => {
 const showBookRequestFormDialog = (model) => {
   state.bookRequestForm = model ? { ...model } : {};
   state.isBookRequestFormDialogVisible = true;
+};
+
+const showBookRequestDeleteDialog = (model) => {
+  ElMessageBox.confirm(
+    '确定删除预约请求？',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    },
+  )
+    .then(() => {
+      const index = _.findIndex(state.bookRequests, (item) => item.id === model.id);
+      if (index >= 0) {
+        state.bookRequests.splice(index, 1);
+      }
+    })
+    .catch(() => {
+    });
 };
 
 const saveBookRequest = () => {

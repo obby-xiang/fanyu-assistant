@@ -184,14 +184,6 @@ const processBookRequests = async () => {
       if (matchBookRequest(course, bookRequest)) {
         logger.info(`Start to book course.\ncourse => ${stringify(course)}\nbookRequest => ${stringify(bookRequest)}`);
 
-        new Notification({
-          urgency: 'critical',
-          timeoutType: 'never',
-          icon: nativeImage.createFromPath(path.resolve(__dirname, './assets/logo.png')),
-          title: '预约成功通知',
-          body: `课程：${course.course.name}\n时间：${course.beginTime_D} ${course.beginTime_}\n门店：${course.store.name}`,
-        }).show();
-
         let bookResult;
         try {
           bookResult = await network.bookCourse(course.id, userCard.id);
@@ -201,6 +193,14 @@ const processBookRequests = async () => {
         }
 
         logger.info(`Book course successfully.\nbookResult => ${stringify(bookResult)}`);
+
+        new Notification({
+          urgency: 'critical',
+          timeoutType: 'never',
+          icon: nativeImage.createFromPath(path.resolve(__dirname, './assets/logo.png')),
+          title: '预约成功通知',
+          body: `课程：${course.course.name}\n时间：${course.beginTime_D} ${course.beginTime_}\n门店：${course.store.name}`,
+        }).show();
 
         bookedCourses.push({
           ...course,
