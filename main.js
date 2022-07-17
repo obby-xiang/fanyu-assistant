@@ -8,6 +8,7 @@ const {
   Menu,
   Tray,
   MenuItem,
+  Notification,
 } = require('electron');
 const path = require('path');
 const util = require('util');
@@ -144,12 +145,22 @@ const processBookRequests = async () => {
     } else {
       logger.info(`Fetch courses of store [${bookRequest.storeId}].`);
 
+      const now = DateTime.now();
+
       try {
-        storeCourses = await network.fetchCourses({
-          storeId: bookRequest.storeId,
-          date: DateTime.now()
-            .toFormat('yyyy-MM-dd'),
-        });
+        storeCourses = _.concat(
+          await network.fetchCourses({
+            storeId: bookRequest.storeId,
+            date: now.startOf('week')
+              .toFormat('yyyy-MM-dd'),
+          }),
+          await network.fetchCourses({
+            storeId: bookRequest.storeId,
+            date: now.endOf('week')
+              .plus({ days: 1 })
+              .toFormat('yyyy-MM-dd'),
+          }),
+        );
       } catch (error) {
         logger.error(`Fetch courses failed.\nerror => ${stringify(error)}`);
         return;
@@ -169,6 +180,14 @@ const processBookRequests = async () => {
       if (matchBookRequest(course, bookRequest)) {
         logger.info(`Start to book course.\ncourse => ${stringify(course)}\nbookRequest => ${stringify(bookRequest)}`);
 
+        new Notification({
+          urgency: 'critical',
+          timeoutType: 'never',
+          icon: nativeImage.createFromPath(path.resolve(__dirname, './assets/logo.png')),
+          title: '预约成功通知',
+          body: `课程：${course.course.name}\n时间：${course.beginTime_D} ${course.beginTime_}\n门店：${course.store.name}`,
+        }).show();
+
         let bookResult;
         try {
           bookResult = await network.bookCourse(course.id, userCard.id);
@@ -179,7 +198,11 @@ const processBookRequests = async () => {
 
         logger.info(`Book course successfully.\nbookResult => ${stringify(bookResult)}`);
 
-        bookedCourses.push(course);
+        bookedCourses.push({
+          ...course,
+          bookedAt: DateTime.now()
+            .toJSDate(),
+        });
         await database.put('bookedCourses', bookedCourses);
       }
     });

@@ -2,20 +2,19 @@
   <el-container class="tw-container tw-mx-auto tw-p-4">
     <el-main class="tw-mx-auto tw-max-w-xl">
       <h1 class="tw-text-lg tw-font-medium tw-mb-4">账号</h1>
-      <el-form :model="state.accountForm" label-width="6rem" label-position="right">
+      <el-form :model="state.accountForm" label-position="right" label-width="6rem">
         <el-form-item label="用户名">
           <el-input v-if="state.isAccountEditing" v-model="state.accountForm.username" type="text"/>
           <span v-else>{{ state.account.username }}</span>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-if="state.isAccountEditing" v-model="state.accountForm.password"
-                    type="password" show-password/>
+                    show-password type="password"/>
           <span v-else>
             <span>{{ state.isAccountPasswordVisible ? state.account.password : '••••••' }}</span>
-            <el-button type="primary" class="tw-ml-1"
-                       :icon="state.isAccountPasswordVisible ? IconView : IconHide"
-                       @click="state.isAccountPasswordVisible = !state.isAccountPasswordVisible"
-                       link/>
+            <el-button :icon="state.isAccountPasswordVisible ? IconView : IconHide" class="tw-ml-1"
+                       link type="primary"
+                       @click="state.isAccountPasswordVisible = !state.isAccountPasswordVisible"/>
           </span>
         </el-form-item>
         <el-form-item>
@@ -36,21 +35,26 @@
 
       <h1 class="tw-text-lg tw-font-medium tw-mb-4">预约请求</h1>
       <div class="tw-flex tw-flex-row tw-justify-between tw-space-x-4">
-        <el-button type="primary" :icon="IconPlus" @click="showBookRequestFormDialog" circle/>
-        <el-button type="success"
-                   @click="state.isBookRequestProcessing = !state.isBookRequestProcessing" circle>
-          <el-icon v-if="state.isBookRequestProcessing" class="is-loading">
-            <icon-loading/>
-          </el-icon>
-          <el-icon v-else>
-            <icon-promotion/>
-          </el-icon>
-        </el-button>
+        <el-button :icon="IconPlus" circle type="primary" @click="showBookRequestFormDialog"/>
+        <div class="tw-space-x-4">
+          <el-button circle type="success"
+                     @click="state.isBookRequestProcessing = !state.isBookRequestProcessing">
+            <el-icon v-if="state.isBookRequestProcessing" class="is-loading">
+              <icon-loading/>
+            </el-icon>
+            <el-icon v-else>
+              <icon-promotion/>
+            </el-icon>
+          </el-button>
+          <router-link to="/book-history">
+            <el-button :icon="IconList" circle type="warning"/>
+          </router-link>
+        </div>
       </div>
-      <vue-draggable class="tw-mt-4" :list="state.bookRequests" item-key="id">
+      <vue-draggable :list="state.bookRequests" class="tw-mt-4" item-key="id">
         <template #item="{element}">
-          <el-card class="tw-my-2" shadow="never"
-                   :body-style="{ 'background-color': element.enable ? '#e1f3d8' : '#fde2e2' }">
+          <el-card :body-style="{ 'background-color': element.enable ? '#e1f3d8' : '#fde2e2' }"
+                   class="tw-my-2" shadow="never">
             <div class="tw-flex tw-flex-row tw-space-x-4">
               <div class="tw-flex-grow">
                 <p class="tw-flex tw-justify-between tw-space-x-4">
@@ -77,34 +81,35 @@
               </div>
 
               <div class="tw-flex tw-flex-row tw-my-auto tw-space-x-4">
-                <el-button type="primary" :icon="IconEdit"
-                           @click="showBookRequestFormDialog(element)" circle/>
-                <el-button type="danger" :icon="IconDelete" circle/>
+                <el-button :icon="IconEdit" circle type="primary"
+                           @click="showBookRequestFormDialog(element)"/>
+                <el-button :icon="IconDelete" circle type="danger"/>
               </div>
             </div>
           </el-card>
         </template>
       </vue-draggable>
 
-      <el-dialog v-model="state.isBookRequestFormDialogVisible" :show-close="false"
-                 :close-on-click-modal="false" :close-on-press-escape="false" title="预约请求">
+      <el-dialog v-model="state.isBookRequestFormDialogVisible" :close-on-click-modal="false"
+                 :close-on-press-escape="false" :show-close="false" title="预约请求">
         <el-form ref="bookRequestFormRef" :model="state.bookRequestForm"
-                 :rules="bookRequestFormRules" label-width="6rem" label-position="right"
-                 class="tw-mx-auto">
+                 :rules="bookRequestFormRules" class="tw-mx-auto" label-position="right"
+                 label-width="6rem">
           <el-form-item label="门店" prop="storeId">
             <el-select v-model="state.bookRequestForm.storeId" class="tw-w-full" filterable>
-              <el-option v-for="item in state.stores" :key="item.id" :value="item.id"
-                         :label="item.name"/>
+              <el-option v-for="item in state.stores" :key="item.id" :label="item.name"
+                         :value="item.id"/>
             </el-select>
           </el-form-item>
           <el-form-item label="时间" prop="timeRange">
-            <el-time-picker v-model="state.bookRequestForm.timeRange" format="HH:mm"
-                            :default-value="defaultTimeRange" class="tw-w-full" is-range/>
+            <el-time-picker v-model="state.bookRequestForm.timeRange"
+                            :default-value="defaultTimeRange" class="tw-w-full" format="HH:mm"
+                            is-range/>
           </el-form-item>
           <el-form-item label="日期" prop="days">
             <el-select v-model="state.bookRequestForm.days" class="tw-w-full" multiple>
-              <el-option v-for="(item, index) in DAY_OPTIONS" :key="index" :value="index + 1"
-                         :label="item"/>
+              <el-option v-for="(item, index) in DAY_OPTIONS" :key="index" :label="item"
+                         :value="index + 1"/>
             </el-select>
           </el-form-item>
           <el-form-item label="启用">
@@ -125,17 +130,18 @@
 
 <script setup>
 import {
-  reactive, ref, watch, isRef,
+  isRef, reactive, ref, watch,
 } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
-  View as IconView,
-  Hide as IconHide,
-  Plus as IconPlus,
-  Edit as IconEdit,
   Delete as IconDelete,
+  Edit as IconEdit,
+  Hide as IconHide,
+  List as IconList,
   Loading as IconLoading,
+  Plus as IconPlus,
   Promotion as IconPromotion,
+  View as IconView,
 } from '@element-plus/icons-vue';
 import VueDraggable from 'vuedraggable';
 import _ from 'lodash';
