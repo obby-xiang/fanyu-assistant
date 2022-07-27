@@ -1,24 +1,33 @@
 # fanyu-assistant
 
-## Project setup
-```
+约课助手
+
+- 快速上手
+
+```shell
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
+```shell
 yarn serve
 ```
 
-### Compiles and minifies for production
+```shell
+yarn start
 ```
+
+- 打包部署
+
+```shell
 yarn build
 ```
 
-### Lints and fixes files
-```
-yarn lint
+```shell
+yarn app:dist
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- 运行效果
+
+<img src="./screenshots/home.png" alt="settings" width="512">
+
+<img src="./screenshots/book-history.png" alt="settings" width="512">
